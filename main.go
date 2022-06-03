@@ -1,5 +1,7 @@
 package main
 
+import "github.com/JoseUgal/cmd-beers-api/cli/cmd"
+
 /*
 .########..########.########.########...######.....###....########..####
 .##.....##.##.......##.......##.....##.##....##...##.##...##.....##..##.
@@ -14,4 +16,5 @@ package main
 
 func main() {
 	// Main app functionallity
+	cmd.DrawUI()
 }
