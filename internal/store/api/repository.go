@@ -34,13 +34,23 @@ func ( r *repository ) GetAllBeers() ([]cli.Beer, error) {
 	
 	var beers []cli.Beer 
 
-	req, _ := r.client.Get(reqAllBers)
+	req, err := r.client.Get(reqAllBers)
 
-	body, _ := ioutil.ReadAll(req.Body)
+	if err != nil {
+		return nil, errors.WrapDataUnreacheable(err, "error getting response to %s" )
+	}
+
+	body, err := ioutil.ReadAll(req.Body)
+
+	if err != nil {
+		return nil, errors.WrapDataUnreacheable(err, "error parsing response to bytes")
+	}
 	
-	_ = json.Unmarshal(body, &beers)
+	err = json.Unmarshal(body, &beers)
 
-	fmt.Println(beers)
+	if err != nil {
+		return nil, errors.WrapDataUnreacheable(err, "error marshaling bytes to 'Beers")
+	}
 
 	return beers, nil
 }
@@ -58,9 +68,17 @@ func ( r *repository ) GetBeer( id int ) (beer cli.Beer,err error) {
 		return cli.Beer{}, errors.WrapDataUnreacheable(err, "error getting response to %s", endpoint )
 	}
 
-	body, _ := ioutil.ReadAll(req.Body)
+	body, err := ioutil.ReadAll(req.Body)
+
+	if err != nil {
+		return cli.Beer{}, errors.WrapDataUnreacheable(err, "error parsing response to bytes")
+	}
 	
-	_ = json.Unmarshal(body, &beers)
+	err = json.Unmarshal(body, &beers)
+
+	if err != nil {
+		return cli.Beer{}, errors.WrapDataUnreacheable(err, "error marshaling bytes to 'Beer")
+	}
 
 	beer = beers[0]
 

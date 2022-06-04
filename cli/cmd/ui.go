@@ -64,7 +64,13 @@ func cmdQuiz( option string ){
                             
                             switch val {
                             case int64(_ALL):
-                                apiRepository.GetAllBeers()
+                                beers, err := apiRepository.GetAllBeers()
+
+                                if errors.IsDataUnreacheable(err) {
+                                    Println(err)
+                                } else {
+                                    Println(beers)
+                                }
                             case int64(_ONE):
                                 cmdQuiz("beer")
                             default:
