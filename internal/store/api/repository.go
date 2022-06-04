@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/JoseUgal/cmd-beers-api/cli"
+	"github.com/JoseUgal/cmd-beers-api/internal/errors"
 )
 
 type repository struct {
@@ -46,17 +46,23 @@ func ( r *repository ) GetAllBeers() ([]cli.Beer, error) {
 }
 
 
-func ( r *repository ) GetBeer( id int ) (cli.Beer, error) {
+func ( r *repository ) GetBeer( id int ) (beer cli.Beer,err error) {
 
 	var beers []cli.Beer
 
-	req, _ := r.client.Get( reqOneBeer + strconv.Itoa(id))
+	endpoint := fmt.Sprintf("%v%v", reqOneBeer, id)
+
+	req, err := r.client.Get( endpoint )
+
+	if err != nil {
+		return cli.Beer{}, errors.WrapDataUnreacheable(err, "error getting response to %s", endpoint )
+	}
 
 	body, _ := ioutil.ReadAll(req.Body)
 	
 	_ = json.Unmarshal(body, &beers)
 
-	fmt.Println(beers[0])
+	beer = beers[0]
 
-	return beers[0], nil
+	return beer, nil
 }

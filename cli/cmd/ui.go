@@ -3,6 +3,7 @@ package cmd
 import (
 	. "fmt"
 
+	"github.com/JoseUgal/cmd-beers-api/internal/errors"
 	store "github.com/JoseUgal/cmd-beers-api/internal/store/api"
 	i "github.com/tockins/interact"
 )
@@ -34,7 +35,6 @@ func DrawUI(){
 
 
 func cmdQuiz( option string ){
-    
     switch option {
         case "main":
                 i.Run(&i.Interact{
@@ -86,7 +86,13 @@ func cmdQuiz( option string ){
                         Action: func(c i.Context) interface{} {
                             val, _ := c.Ans().Int()
                             
-                            apiRepository.GetBeer(int(val))
+                            beer, err := apiRepository.GetBeer(int(val))
+
+                            if errors.IsDataUnreacheable(err) {
+                                Println(err)
+                            }else{
+                                Println(beer)
+                            }
         
                             return nil
                         },
